@@ -17,6 +17,7 @@ namespace AWHumanResources.Data
         public byte PayFrequency { get; set; }
         public decimal Rate { get; set; }
         public DateTime RateChangeDate { get; set; }
+        public int ShiftID { get; set; }
         public int DepartmentID { get; set; }
         public string DepartmentName { get; set; }
         public string DeptGroupName { get; set; }

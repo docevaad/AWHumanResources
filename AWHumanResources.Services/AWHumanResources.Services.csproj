@@ -62,7 +62,6 @@
     <Compile Include="DepartmentService.cs" />
     <Compile Include="EmployeeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqlServiceDataSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

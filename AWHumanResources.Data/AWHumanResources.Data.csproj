@@ -40,10 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DepartmentDto.cs" />
-    <Compile Include="EmployeePayHistDto.cs" />
-    <Compile Include="EmployeeViewDto.cs" />
+    <Compile Include="DTOs\DepartmentDto.cs" />
+    <Compile Include="DTOs\EmployeeDeptHistDto.cs" />
+    <Compile Include="DTOs\EmployeePayHistDto.cs" />
+    <Compile Include="DTOs\EmployeeViewDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\EmpDeptUpdateVM.cs" />
+    <Compile Include="ViewModels\EmpPayUpdateVM.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
