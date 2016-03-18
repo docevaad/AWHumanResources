@@ -18,16 +18,25 @@ namespace AWHumanResources.Services
             m_DataSource = dataSource;
         }
 
-        public List<EmployeeDto> GetAll()
+        public List<EmployeeViewDto> GetAll()
         {
-            return m_DataSource.From("HumanResources.vEmployeeDepartment").ToCollection<EmployeeDto>().Execute();
+            return m_DataSource.From("HumanResources.vEmployeeWithPayHist")
+                .ToCollection<EmployeeViewDto>()
+                .Execute();
         }
 
-        public List<EmployeeDto> GetEmployeesByDepartment(string department)
+        public List<EmployeeViewDto> GetEmployeesByDepartment(string department)
         {
-            var sql = m_DataSource.From("HumanResources.vEmployeeDepartment", new { Department = department }).ToCollection<EmployeeDto>().Sql();
-            Debug.WriteLine($"Sql: {sql}");
-            return m_DataSource.From("HumanResources.vEmployeeDepartment", new { Department = department }).ToCollection<EmployeeDto>().Execute();
+            return m_DataSource.From("HumanResources.vEmployeeWithPayHist", new { DepartmentName = department })
+                .ToCollection<EmployeeViewDto>()
+                .Execute();
+        }
+
+        public List<EmployeeViewDto> GetEmployeeById(int id)
+        {
+            return m_DataSource.From("HumanResources.vEmployeeWithPayHist", new { BusinessEntityID = id })
+                .ToCollection<EmployeeViewDto>()
+                .Execute();
         }
     }
 }

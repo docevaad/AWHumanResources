@@ -16,16 +16,23 @@ namespace AWHumanResources.Web.Controllers
         }
 
         [HttpGet]
-        public List<EmployeeDto> Get()
+        public List<EmployeeViewDto> Get()
         {
             return m_EmployeeService.GetAll();
         }
 
         [HttpGet]
         [Route("{department}")]
-        public List<EmployeeDto> Get(string department)
+        public List<EmployeeViewDto> Get(string department)
         {
             return m_EmployeeService.GetEmployeesByDepartment(department);
+        }
+
+        [HttpGet]
+        [Route("{id:int}")]
+        public List<EmployeeViewDto> Get(int id)
+        {
+            return m_EmployeeService.GetEmployeeById(id);
         }
     }
 }
