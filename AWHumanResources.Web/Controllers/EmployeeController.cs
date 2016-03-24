@@ -42,26 +42,40 @@ namespace AWHumanResources.Web.Controllers
 
         [HttpPost]
         [Route("{id:int}/UpdatePay")]
-        public HttpResponseMessage UpdatePay(HttpRequestMessage request, [FromBody] EmpPayUpdateVM vm)
+        public HttpResponseMessage UpdatePay(HttpRequestMessage request, EmpPayUpdateVM vm)
         {
-            var empViewVM = m_EmployeeService.UpdateEmployeePayHist(vm);
-            if (empViewVM == null)
+            if(!ModelState.IsValid)
             {
-                return request.CreateResponse(HttpStatusCode.NotFound);
+                return request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
-            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
+            else
+            {
+                var empViewVM = m_EmployeeService.UpdateEmployeePayHist(vm);
+                if (empViewVM == null)
+                {
+                    return request.CreateResponse(HttpStatusCode.NotFound);
+                }
+                return request.CreateResponse(HttpStatusCode.OK, empViewVM);
+            }
         }
 
         [HttpPost]
         [Route("{id:int}/UpdateDept")]
-        public HttpResponseMessage UpdateDept(HttpRequestMessage request, [FromBody] EmpDeptUpdateVM vm)
+        public HttpResponseMessage UpdateDept(HttpRequestMessage request,  EmpDeptUpdateVM vm)
         {
-            var empViewVM = m_EmployeeService.UpdateEmployeeDepartment(vm);
-            if (empViewVM == null)
+            if (!ModelState.IsValid)
             {
-                return request.CreateResponse(HttpStatusCode.NotFound);
+                return request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
             }
-            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
+            else
+            {
+                var empViewVM = m_EmployeeService.UpdateEmployeeDepartment(vm);
+                if (empViewVM == null)
+                {
+                    return request.CreateResponse(HttpStatusCode.NotFound);
+                }
+                return request.CreateResponse(HttpStatusCode.OK, empViewVM);
+            }
         }
     }
 }
