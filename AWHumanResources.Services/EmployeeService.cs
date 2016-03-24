@@ -10,38 +10,39 @@ namespace AWHumanResources.Services
     public class EmployeeService
     {
         private readonly SqlServerDataSource m_DataSource;
-        private readonly string HRvEWPHTable = "HumanResources.vEmployeeWithPayHist";
-        private readonly string EmpPayHistTable = "HumanResources.vEmployeePayHistory";
+        private readonly string m_EmpWithPayHistTableName = "HumanResources.vEmployeeWithPayHist";
+        private readonly string m_EmpPayHistTableName = "HumanResources.EmployeePayHistory";
+        private readonly string m_EmpDeptHistTableName = "HumanResources.EmployeeDepartmentHistory";
 
         public EmployeeService(SqlServerDataSource dataSource)
         {
             m_DataSource = dataSource;
         }
 
-        public List<EmployeeViewDto> GetAll()
+        public IEnumerable<EmployeeViewVM> GetAll()
         {
-            return m_DataSource.From(HRvEWPHTable)
-                .ToCollection<EmployeeViewDto>()
+            return m_DataSource.From(m_EmpWithPayHistTableName)
+                .ToCollection<EmployeeViewVM>()
                 .Execute();
         }
 
-        public List<EmployeeViewDto> GetEmployeesByDepartment(string department)
+        public IEnumerable<EmployeeViewVM> GetEmployeesByDepartmentId(int departmentId)
         {
-            return m_DataSource.From(HRvEWPHTable, new { DepartmentName = department })
-                .ToCollection<EmployeeViewDto>()
+            return m_DataSource.From(m_EmpWithPayHistTableName, new { DepartmentID = departmentId })
+                .ToCollection<EmployeeViewVM>()
                 .Execute();
         }
 
-        public EmployeeViewDto GetEmployeeById(int id)
+        public EmployeeViewVM GetEmployeeById(int id)
         {
-            return m_DataSource.From(HRvEWPHTable, new { BusinessEntityID = id })
-                .ToObject<EmployeeViewDto>()
-                .Execute();
+            return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = id })
+                    .ToObject<EmployeeViewVM>()
+                    .Execute();
         }
 
-        public EmployeePayHistDto UpdateEmployeePayHist(EmpPayUpdateVM vm)
+        public EmployeeViewVM UpdateEmployeePayHist(EmpPayUpdateVM vm)
         {
-            EmployeePayHistDto emp = m_DataSource.From(HRvEWPHTable, new { BusinessEntityID = vm.BusinessEntityID })
+            EmployeePayHistDto emp = m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = vm.BusinessEntityID })
                 .ToObject<EmployeePayHistDto>()
                 .Execute();
 
@@ -56,48 +57,57 @@ namespace AWHumanResources.Services
                     ModifiedDate = DateTime.Now
                 };
 
-                m_DataSource.Insert(EmpPayHistTable, ephDto).Execute();
-                return m_DataSource.From(HRvEWPHTable, new { BusinessEntityID = vm.BusinessEntityID })
-                .ToObject<EmployeePayHistDto>()
+                m_DataSource.Insert(m_EmpPayHistTableName, ephDto).Execute();
+                return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = vm.BusinessEntityID })
+                .ToObject<EmployeeViewVM>()
                 .Execute();
             }
 
-            //Maybe create an exception for this.
-            return null;
+            return null; 
         }
 
-        public EmployeePayHistDto UpdateEmployeeDepartment(EmpDeptUpdateVM vm)
+        public EmployeeViewVM UpdateEmployeeDepartment(EmpDeptUpdateVM vm)
         {
-            EmployeeViewDto emp = m_DataSource.From(HRvEWPHTable, new { BusinessEntityID = vm.BusinessEntityID })
+            EmployeeViewDto emp = m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = vm.BusinessEntityID })
                 .ToObject<EmployeeViewDto>()
                 .Execute();
 
             if (emp != null)
             {
-                DepartmentDto deptDto = m_DataSource.From("HumanResources.Department", new { Name = vm.Department })
+                DepartmentDto deptDto = m_DataSource.From("HumanResources.Department", new { DepartmentID = vm.DepartmentID })
                     .ToObject<DepartmentDto>()
                     .Execute();
                 
                 if (deptDto != null)
                 {
+                    var updateObj = new Dictionary<string, object>();
+                    // Table Keys
+                    updateObj["BusinessEntityID"] = emp.BusinessEntityID;
+                    updateObj["DepartmentID"] = emp.DepartmentID;
+                    updateObj["ShiftID"] = emp.ShiftID;
+                    updateObj["StartDate"] = emp.DeptStartDate;
+
+                    // Value to update
+                    updateObj["EndDate"] = vm.CurrentDeptEndDate;
+                    m_DataSource.Update(m_EmpDeptHistTableName, updateObj).Execute();
+                
                     var empDeptHist = new EmployeeDeptHistDto
                     {
                         DepartmentID = deptDto.DepartmentID,
                         BusinessEntityID = vm.BusinessEntityID,
                         ShiftID = emp.ShiftID,
-                        StartDate = vm.StartDate,
+                        StartDate = vm.NewDeptStartDate,
                         EndDate = null,
                         ModifiedDate = DateTime.Now
                     };
 
-                    m_DataSource.Insert("HumanResources.EmployeeDepartmentHistory", empDeptHist).Execute();
-                    return m_DataSource.From(HRvEWPHTable, new { BusinessEntityID = vm.BusinessEntityID })
-                        .ToObject<EmployeePayHistDto>()
+                    m_DataSource.Insert(m_EmpDeptHistTableName, empDeptHist).Execute();
+                    return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = vm.BusinessEntityID })
+                        .ToObject<EmployeeViewVM>()
                         .Execute();
                 }
                 return null;
             }
-
             return null;
         }
     }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AWHumanResources.Data
+namespace AWHumanResources.Data.ViewModels
 {
-    public class EmployeeViewDto
+    public class EmployeeViewVM
     {
         public int BusinessEntityID { get; set; }
         public string Title { get; set; }
@@ -16,10 +16,7 @@ namespace AWHumanResources.Data
         public string Suffix { get; set; }
         public byte PayFrequency { get; set; }
         public decimal Rate { get; set; }
-        public DateTime RateChangeDate { get; set; }
-        public int ShiftID { get; set; }
         public int DepartmentID { get; set; }
-        public DateTime DeptStartDate { get; set; }
         public string DepartmentName { get; set; }
         public string DeptGroupName { get; set; }
     }

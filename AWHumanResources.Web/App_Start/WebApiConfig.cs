@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using AWHumanResources.Web.Infrastructure.Filters;
 using System.Web.Http;
 
 namespace AWHumanResources.Web
@@ -10,6 +8,7 @@ namespace AWHumanResources.Web
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
+            config.Filters.Add(new ResourceNotFoundExceptionFilter());
 
             // Web API routes
             config.MapHttpAttributeRoutes();

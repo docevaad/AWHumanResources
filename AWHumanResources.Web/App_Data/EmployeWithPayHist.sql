@@ -5,7 +5,20 @@ IF OBJECT_ID('HumanResources.vEmployeeWithPayHist','V') IS NOT NULL
 GO
 CREATE VIEW HumanResources.vEmployeeWithPayHist
 AS
-SELECT e.BusinessEntityID, p.Title, p.FirstName, p.MiddleName, p.LastName, p.Suffix, eph.PayFrequency, eph.Rate, eph.RateChangeDate, edh.ShiftID, edh.DepartmentID, d.Name as DepartmentName, d.GroupName as DeptGroupName
+SELECT	e.BusinessEntityID, 
+		p.Title, 
+		p.FirstName, 
+		p.MiddleName, 
+		p.LastName, 
+		p.Suffix, 
+		eph.PayFrequency, 
+		eph.Rate, 
+		eph.RateChangeDate, 
+		edh.ShiftID, 
+		edh.StartDate as DeptStartDate, 
+		edh.DepartmentID, 
+		d.Name as DepartmentName, 
+		d.GroupName as DeptGroupName
 FROM AdventureWorks2012.HumanResources.Employee as e
 JOIN AdventureWorks2012.Person.Person as p on e.BusinessEntityID = p.BusinessEntityID
 JOIN (SELECT t1.BusinessEntityID, t1.ModifiedDate, t1.PayFrequency, t1.Rate, t1.RateChangeDate

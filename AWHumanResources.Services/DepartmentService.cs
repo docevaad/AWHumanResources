@@ -11,6 +11,7 @@ namespace AWHumanResources.Services
     public class DepartmentService
     {
         private readonly SqlServerDataSource m_DataSource;
+        private readonly string m_DeptTableName = "HumanResources.Department";
 
         public DepartmentService(SqlServerDataSource dataSource)
         {
@@ -19,7 +20,12 @@ namespace AWHumanResources.Services
 
         public List<DepartmentDto> GetDepartments()
         {
-            return m_DataSource.From("HumanResources.Department").ToCollection<DepartmentDto>().Execute();
+            return m_DataSource.From(m_DeptTableName).ToCollection<DepartmentDto>().Execute();
+        }
+
+        public DepartmentDto GetDepartmentById(int departmentId)
+        {
+            return m_DataSource.From(m_DeptTableName, new { DepartmentID = departmentId }).ToObject<DepartmentDto>().Execute();
         }
     }
 }

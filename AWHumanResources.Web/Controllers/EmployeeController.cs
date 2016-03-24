@@ -1,5 +1,6 @@
 ﻿using AWHumanResources.Data.ViewModels;
 using AWHumanResources.Services;
+using AWHumanResources.Web.Infrastructure.Filters;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -19,61 +20,48 @@ namespace AWHumanResources.Web.Controllers
         [HttpGet]
         public HttpResponseMessage Get(HttpRequestMessage request)
         {
-            var empViewDtos = m_EmployeeService.GetAll();
-            if (empViewDtos == null)
+            var empViewVM = m_EmployeeService.GetAll();
+            if (empViewVM == null)
             {
                 return request.CreateResponse(HttpStatusCode.NotFound);
             }
-            return request.CreateResponse(HttpStatusCode.OK, empViewDtos); ;
-        }
-
-        [HttpGet]
-        [Route("{department}")]
-        public HttpResponseMessage Get(HttpRequestMessage request, string department)
-        {
-            var empViewDtos = m_EmployeeService.GetEmployeesByDepartment(department);
-
-            if (empViewDtos == null)
-            {
-                return request.CreateResponse(HttpStatusCode.NotFound);
-            }
-            return request.CreateResponse(HttpStatusCode.OK, empViewDtos);
+            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
         }
 
         [HttpGet]
         [Route("{id:int}")]
         public HttpResponseMessage Get(HttpRequestMessage request, int id)
         {
-            var empViewDto = m_EmployeeService.GetEmployeeById(id);
-            if (empViewDto == null)
+            var empViewVM = m_EmployeeService.GetEmployeeById(id);
+            if (empViewVM == null)
             {
                 return request.CreateResponse(HttpStatusCode.NotFound);
             }
-            return request.CreateResponse(HttpStatusCode.OK, empViewDto);
+            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
         }
 
         [HttpPost]
-        [Route("UpdatePay")]
-        public HttpResponseMessage Post(HttpRequestMessage request, EmpPayUpdateVM vm)
+        [Route("{id:int}/UpdatePay")]
+        public HttpResponseMessage UpdatePay(HttpRequestMessage request, [FromBody] EmpPayUpdateVM vm)
         {
-            var empViewDto = m_EmployeeService.UpdateEmployeePayHist(vm);
-            if (empViewDto == null)
+            var empViewVM = m_EmployeeService.UpdateEmployeePayHist(vm);
+            if (empViewVM == null)
             {
                 return request.CreateResponse(HttpStatusCode.NotFound);
             }
-            return request.CreateResponse(HttpStatusCode.OK, empViewDto);
+            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
         }
 
         [HttpPost]
-        [Route("UpdateDept")]
-        public HttpResponseMessage Post(HttpRequestMessage request, EmpDeptUpdateVM vm)
+        [Route("{id:int}/UpdateDept")]
+        public HttpResponseMessage UpdateDept(HttpRequestMessage request, [FromBody] EmpDeptUpdateVM vm)
         {
-            var empViewDto = m_EmployeeService.UpdateEmployeeDepartment(vm);
-            if (empViewDto == null)
+            var empViewVM = m_EmployeeService.UpdateEmployeeDepartment(vm);
+            if (empViewVM == null)
             {
                 return request.CreateResponse(HttpStatusCode.NotFound);
             }
-            return request.CreateResponse(HttpStatusCode.OK, empViewDto);
+            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
         }
     }
 }
