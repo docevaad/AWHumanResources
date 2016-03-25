@@ -7,18 +7,30 @@ using Tortuga.Chain;
 
 namespace AWHumanResources.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class EmployeeService
     {
         private readonly SqlServerDataSource m_DataSource;
         private readonly string m_EmpWithPayHistTableName = "HumanResources.vEmployeeWithPayHist";
         private readonly string m_EmpPayHistTableName = "HumanResources.EmployeePayHistory";
+        private readonly string m_DepartmentTableName = "HumanResources.Department";
         private readonly string m_EmpDeptHistTableName = "HumanResources.EmployeeDepartmentHistory";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmployeeService"/> class.
+        /// </summary>
+        /// <param name="dataSource">The data source.</param>
         public EmployeeService(SqlServerDataSource dataSource)
         {
             m_DataSource = dataSource;
         }
 
+        /// <summary>
+        /// Gets all.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<EmployeeViewVM> GetAll()
         {
             return m_DataSource.From(m_EmpWithPayHistTableName)
@@ -26,6 +38,11 @@ namespace AWHumanResources.Services
                 .Execute();
         }
 
+        /// <summary>
+        /// Gets the employees by department identifier.
+        /// </summary>
+        /// <param name="departmentId">The department identifier.</param>
+        /// <returns></returns>
         public IEnumerable<EmployeeViewVM> GetEmployeesByDepartmentId(int departmentId)
         {
             return m_DataSource.From(m_EmpWithPayHistTableName, new { DepartmentID = departmentId })
@@ -33,6 +50,11 @@ namespace AWHumanResources.Services
                 .Execute();
         }
 
+        /// <summary>
+        /// Gets the employee by identifier.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
         public EmployeeViewVM GetEmployeeById(int id)
         {
             return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = id })
@@ -40,6 +62,11 @@ namespace AWHumanResources.Services
                     .Execute();
         }
 
+        /// <summary>
+        /// Updates the employee pay hist.
+        /// </summary>
+        /// <param name="vm">The vm.</param>
+        /// <returns></returns>
         public EmployeeViewVM UpdateEmployeePayHist(EmpPayUpdateVM vm)
         {
             EmployeePayHistDto emp = m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = vm.BusinessEntityID })
@@ -66,6 +93,11 @@ namespace AWHumanResources.Services
             return null; 
         }
 
+        /// <summary>
+        /// Updates the employee department.
+        /// </summary>
+        /// <param name="vm">The vm.</param>
+        /// <returns></returns>
         public EmployeeViewVM UpdateEmployeeDepartment(EmpDeptUpdateVM vm)
         {
             EmployeeViewDto emp = m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = vm.BusinessEntityID })
@@ -74,7 +106,7 @@ namespace AWHumanResources.Services
 
             if (emp != null)
             {
-                DepartmentDto deptDto = m_DataSource.From("HumanResources.Department", new { DepartmentID = vm.DepartmentID })
+                DepartmentDto deptDto = m_DataSource.From(m_DepartmentTableName, new { DepartmentID = vm.DepartmentID })
                     .ToObject<DepartmentDto>()
                     .Execute();
                 

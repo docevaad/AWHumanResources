@@ -44,38 +44,24 @@ namespace AWHumanResources.Web.Controllers
         [Route("{id:int}/UpdatePay")]
         public HttpResponseMessage UpdatePay(HttpRequestMessage request, EmpPayUpdateVM vm)
         {
-            if(!ModelState.IsValid)
+            var empViewVM = m_EmployeeService.UpdateEmployeePayHist(vm);
+            if (empViewVM == null)
             {
-                return request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+                return request.CreateResponse(HttpStatusCode.NotFound);
             }
-            else
-            {
-                var empViewVM = m_EmployeeService.UpdateEmployeePayHist(vm);
-                if (empViewVM == null)
-                {
-                    return request.CreateResponse(HttpStatusCode.NotFound);
-                }
-                return request.CreateResponse(HttpStatusCode.OK, empViewVM);
-            }
+            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
         }
 
         [HttpPost]
         [Route("{id:int}/UpdateDept")]
         public HttpResponseMessage UpdateDept(HttpRequestMessage request,  EmpDeptUpdateVM vm)
         {
-            if (!ModelState.IsValid)
+            var empViewVM = m_EmployeeService.UpdateEmployeeDepartment(vm);
+            if (empViewVM == null)
             {
-                return request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+                return request.CreateResponse(HttpStatusCode.NotFound);
             }
-            else
-            {
-                var empViewVM = m_EmployeeService.UpdateEmployeeDepartment(vm);
-                if (empViewVM == null)
-                {
-                    return request.CreateResponse(HttpStatusCode.NotFound);
-                }
-                return request.CreateResponse(HttpStatusCode.OK, empViewVM);
-            }
+            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
         }
     }
 }
