@@ -1,9 +1,9 @@
 # AWHumanResources
 ASP.NET WebApi 2 practice.
 
-#API Endpoints
+##API Endpoints
 
 1. /api/department
-..* Gets a list of departments in the Human Resources database
+  *Gets a list of departments in the Human Resources database
 
 
