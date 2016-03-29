@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWHumanResources.Services",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWHumanResources.Data", "AWHumanResources.Data\AWHumanResources.Data.csproj", "{5EFE77D1-DDC0-4328-94C4-CD540ED8F273}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWHumanResources.Services.Tests", "AWHumanResources.Services.Tests\AWHumanResources.Services.Tests.csproj", "{936DB677-D63B-45A0-B49E-737143759911}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5EFE77D1-DDC0-4328-94C4-CD540ED8F273}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EFE77D1-DDC0-4328-94C4-CD540ED8F273}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EFE77D1-DDC0-4328-94C4-CD540ED8F273}.Release|Any CPU.Build.0 = Release|Any CPU
+		{936DB677-D63B-45A0-B49E-737143759911}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{936DB677-D63B-45A0-B49E-737143759911}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{936DB677-D63B-45A0-B49E-737143759911}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{936DB677-D63B-45A0-B49E-737143759911}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

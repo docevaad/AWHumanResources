@@ -117,10 +117,10 @@ namespace AWHumanResources.Services
                     updateObj["BusinessEntityID"] = emp.BusinessEntityID;
                     updateObj["DepartmentID"] = emp.DepartmentID;
                     updateObj["ShiftID"] = emp.ShiftID;
-                    updateObj["StartDate"] = emp.DeptStartDate;
+                    updateObj["StartDate"] = emp.DeptStartDate.Date;
 
                     // Value to update
-                    updateObj["EndDate"] = vm.CurrentDeptEndDate;
+                    updateObj["EndDate"] = vm.CurrentDeptEndDate.Date;
                     m_DataSource.Update(m_EmpDeptHistTableName, updateObj).Execute();
                 
                     var empDeptHist = new EmployeeDeptHistDto
@@ -128,7 +128,7 @@ namespace AWHumanResources.Services
                         DepartmentID = deptDto.DepartmentID,
                         BusinessEntityID = vm.BusinessEntityID,
                         ShiftID = emp.ShiftID,
-                        StartDate = vm.NewDeptStartDate,
+                        StartDate = vm.NewDeptStartDate.Date,
                         EndDate = null,
                         ModifiedDate = DateTime.Now
                     };
