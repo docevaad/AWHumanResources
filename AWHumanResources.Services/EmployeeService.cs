@@ -67,9 +67,9 @@ namespace AWHumanResources.Services
         /// </summary>
         /// <param name="vm">The vm.</param>
         /// <returns></returns>
-        public EmployeeViewVM UpdateEmployeePayHist(EmpPayUpdateVM vm)
+        public EmployeeViewVM UpdateEmployeePayHist(int employeeId, EmpPayUpdateRequest vm)
         {
-            EmployeePayHistDto emp = m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = vm.BusinessEntityID })
+            EmployeePayHistDto emp = m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                 .ToObject<EmployeePayHistDto>()
                 .Execute();
 
@@ -77,7 +77,7 @@ namespace AWHumanResources.Services
             {
                 var ephDto = new EmployeePayHistDto
                 {
-                    BusinessEntityID = vm.BusinessEntityID,
+                    BusinessEntityID = employeeId,
                     Rate = vm.Rate,
                     RateChangeDate = vm.RateChangeDate,
                     PayFrequency = vm.PayFrequency,
@@ -85,7 +85,7 @@ namespace AWHumanResources.Services
                 };
 
                 m_DataSource.Insert(m_EmpPayHistTableName, ephDto).Execute();
-                return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = vm.BusinessEntityID })
+                return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                 .ToObject<EmployeeViewVM>()
                 .Execute();
             }
@@ -98,9 +98,9 @@ namespace AWHumanResources.Services
         /// </summary>
         /// <param name="vm">The vm.</param>
         /// <returns></returns>
-        public EmployeeViewVM UpdateEmployeeDepartment(EmpDeptUpdateVM vm)
+        public EmployeeViewVM UpdateEmployeeDepartment(int employeeId, EmpDeptUpdateRequest vm)
         {
-            EmployeeViewDto emp = m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = vm.BusinessEntityID })
+            EmployeeViewDto emp = m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                 .ToObject<EmployeeViewDto>()
                 .Execute();
 
@@ -126,7 +126,7 @@ namespace AWHumanResources.Services
                     var empDeptHist = new EmployeeDeptHistDto
                     {
                         DepartmentID = deptDto.DepartmentID,
-                        BusinessEntityID = vm.BusinessEntityID,
+                        BusinessEntityID = employeeId,
                         ShiftID = emp.ShiftID,
                         StartDate = vm.NewDeptStartDate.Date,
                         EndDate = null,
@@ -134,7 +134,7 @@ namespace AWHumanResources.Services
                     };
 
                     m_DataSource.Insert(m_EmpDeptHistTableName, empDeptHist).Execute();
-                    return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = vm.BusinessEntityID })
+                    return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                         .ToObject<EmployeeViewVM>()
                         .Execute();
                 }

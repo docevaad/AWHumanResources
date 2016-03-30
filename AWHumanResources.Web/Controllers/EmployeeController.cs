@@ -1,6 +1,5 @@
 ﻿using AWHumanResources.Data.ViewModels;
 using AWHumanResources.Services;
-using AWHumanResources.Web.Infrastructure.Filters;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -41,10 +40,10 @@ namespace AWHumanResources.Web.Controllers
         }
 
         [HttpPost]
-        [Route("{id:int}/UpdatePay")]
-        public HttpResponseMessage UpdatePay(HttpRequestMessage request, EmpPayUpdateVM vm)
+        [Route("{employeeId:int}/UpdatePay")]
+        public HttpResponseMessage UpdatePay(HttpRequestMessage request, int employeeId, EmpPayUpdateRequest vm)
         {
-            var empViewVM = m_EmployeeService.UpdateEmployeePayHist(vm);
+            var empViewVM = m_EmployeeService.UpdateEmployeePayHist(employeeId, vm);
             if (empViewVM == null)
             {
                 return request.CreateResponse(HttpStatusCode.NotFound);
@@ -53,10 +52,10 @@ namespace AWHumanResources.Web.Controllers
         }
 
         [HttpPost]
-        [Route("{id:int}/UpdateDept")]
-        public HttpResponseMessage UpdateDept(HttpRequestMessage request,  EmpDeptUpdateVM vm)
+        [Route("{employeeId:int}/UpdateDept")]
+        public HttpResponseMessage UpdateDept(HttpRequestMessage request,  int employeeId, EmpDeptUpdateRequest vm)
         {
-            var empViewVM = m_EmployeeService.UpdateEmployeeDepartment(vm);
+            var empViewVM = m_EmployeeService.UpdateEmployeeDepartment(employeeId, vm);
             if (empViewVM == null)
             {
                 return request.CreateResponse(HttpStatusCode.NotFound);

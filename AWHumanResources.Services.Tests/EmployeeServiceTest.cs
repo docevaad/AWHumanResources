@@ -19,9 +19,9 @@ namespace AWHumanResources.Services.Tests
         public void UpdateEmployeePayHistTest()
         {
             // Setup
-             var input = new EmpPayUpdateVM
+            int employeeId = 1;
+            var input = new EmpPayUpdateRequest
             {
-                BusinessEntityID = 1,
                 PayFrequency = 1,
                 Rate = 45.45M,
                 RateChangeDate = DateTime.Now
@@ -29,17 +29,17 @@ namespace AWHumanResources.Services.Tests
             var classUnderTest = new EmployeeService(m_DataSource);
             
             // Act
-            var output = classUnderTest.UpdateEmployeePayHist(input);
+            var output = classUnderTest.UpdateEmployeePayHist(employeeId, input);
 
             // Assert
             Assert.NotNull(output);
-            Assert.Equal(input.BusinessEntityID, output.BusinessEntityID);
+            Assert.Equal(employeeId, output.BusinessEntityID);
             Assert.Equal(input.PayFrequency, output.PayFrequency);
             Assert.Equal(input.Rate, output.Rate);
 
             // Clean-up
             var cleanUpObj = new Dictionary<string, object>();
-            cleanUpObj["BusinessEntityID"] = input.BusinessEntityID;
+            cleanUpObj["BusinessEntityID"] = employeeId;
             cleanUpObj["PayFrequency"] = input.PayFrequency;
             cleanUpObj["Rate"] = input.Rate;
             cleanUpObj["RateChangeDate"] = input.RateChangeDate;
@@ -50,9 +50,9 @@ namespace AWHumanResources.Services.Tests
         public void UpdateEmployeeDepartmentTest()
         {
             // Setup
-            var input = new EmpDeptUpdateVM
+            int employeeId = 1;
+            var input = new EmpDeptUpdateRequest
             {
-                BusinessEntityID = 1,
                 DepartmentID = 2,
                 CurrentDeptEndDate = DateTime.Now.AddDays(-1),
                 NewDeptStartDate = DateTime.Now
@@ -60,11 +60,11 @@ namespace AWHumanResources.Services.Tests
             var classUnderTest = new EmployeeService(m_DataSource);
 
             // Act
-            var output = classUnderTest.UpdateEmployeeDepartment(input);
+            var output = classUnderTest.UpdateEmployeeDepartment(employeeId, input);
 
             // Assert
             Assert.NotNull(output);
-            Assert.Equal(input.BusinessEntityID, output.BusinessEntityID);
+            Assert.Equal(employeeId, output.BusinessEntityID);
             Assert.Equal(input.DepartmentID, output.DepartmentID);
 
             // Clean-up
@@ -73,7 +73,7 @@ namespace AWHumanResources.Services.Tests
                 FROM AdventureWorks2012.HumanResources.EmployeeDepartmentHistory
                 WHERE BusinessEntityID=@BusinessEntityID AND
                       DepartmentID=@DepartmentID";
-            var shiftID = m_DataSource.Sql(shiftIDSql, new { BusinessEntityID = input.BusinessEntityID, DepartmentID = input.DepartmentID }).ToInt32().Execute();
+            var shiftID = m_DataSource.Sql(shiftIDSql, new { BusinessEntityID = employeeId, DepartmentID = input.DepartmentID }).ToInt32().Execute();
             var repairSql =
                 @"DELETE FROM AdventureWorks2012.HumanResources.EmployeeDepartmentHistory
                   WHERE BusinessEntityID=@BusinessEntityID AND
@@ -85,7 +85,7 @@ namespace AWHumanResources.Services.Tests
                   WHERE BusinessEntityID=@BusinessEntityID AND
                         EndDate=@EndDate;";
             var cleanUpObj = new Dictionary<string, object>();
-            cleanUpObj["BusinessEntityID"] = input.BusinessEntityID;
+            cleanUpObj["BusinessEntityID"] = employeeId;
             cleanUpObj["DepartmentID"] = input.DepartmentID;
             cleanUpObj["StartDate"] = input.NewDeptStartDate.Date;
             cleanUpObj["ShiftID"] = shiftID;
