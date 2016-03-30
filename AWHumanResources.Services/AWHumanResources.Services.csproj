@@ -59,7 +59,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BusinessException.cs" />
     <Compile Include="DepartmentService.cs" />
     <Compile Include="EmployeeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
