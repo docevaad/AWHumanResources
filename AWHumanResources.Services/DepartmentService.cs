@@ -1,31 +1,44 @@
 ﻿using AWHumanResources.Data;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Tortuga.Chain;
 
 namespace AWHumanResources.Services
 {
+    /// <summary>
+    /// Department Service
+    /// </summary>
     public class DepartmentService
     {
         private readonly SqlServerDataSource m_DataSource;
         private readonly string m_DeptTableName = "HumanResources.Department";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DepartmentService"/> class.
+        /// </summary>
+        /// <param name="dataSource">The data source.</param>
         public DepartmentService(SqlServerDataSource dataSource)
         {
             m_DataSource = dataSource;
         }
 
-        public List<DepartmentDto> GetDepartments()
+        /// <summary>
+        /// Gets a list of departments.
+        /// </summary>
+        /// <returns></returns>
+        public Task<List<DepartmentDto>> GetDepartmentsAsync()
         {
-            return m_DataSource.From(m_DeptTableName).ToCollection<DepartmentDto>().Execute();
+            return m_DataSource.From(m_DeptTableName).ToCollection<DepartmentDto>().ExecuteAsync();
         }
 
-        public DepartmentDto GetDepartmentById(int departmentId)
+        /// <summary>
+        /// Gets a department by identifier.
+        /// </summary>
+        /// <param name="departmentId">The department identifier.</param>
+        /// <returns></returns>
+        public Task<DepartmentDto> GetDepartmentByIdAsync(int departmentId)
         {
-            return m_DataSource.From(m_DeptTableName, new { DepartmentID = departmentId }).ToObject<DepartmentDto>().Execute();
+            return m_DataSource.From(m_DeptTableName, new { DepartmentID = departmentId }).ToObject<DepartmentDto>().ExecuteAsync();
         }
     }
 }

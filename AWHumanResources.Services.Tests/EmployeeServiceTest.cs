@@ -16,7 +16,7 @@ namespace AWHumanResources.Services.Tests
         }
 
         [Fact]
-        public void UpdateEmployeePayHistTest()
+        public async void UpdateEmployeePayHistTest()
         {
             // Setup
             int employeeId = 1;
@@ -27,9 +27,9 @@ namespace AWHumanResources.Services.Tests
                 RateChangeDate = DateTime.Now
             };
             var classUnderTest = new EmployeeService(m_DataSource);
-            
+
             // Act
-            var output = classUnderTest.UpdateEmployeePayHist(employeeId, input);
+            var output = await classUnderTest.UpdateEmployeePayHistAsync(employeeId, input);
 
             // Assert
             Assert.NotNull(output);
@@ -47,7 +47,7 @@ namespace AWHumanResources.Services.Tests
         }
 
         [Fact]
-        public void UpdateEmployeeDepartmentTest()
+        public async void UpdateEmployeeDepartmentTest()
         {
             // Setup
             int employeeId = 1;
@@ -60,7 +60,7 @@ namespace AWHumanResources.Services.Tests
             var classUnderTest = new EmployeeService(m_DataSource);
 
             // Act
-            var output = classUnderTest.UpdateEmployeeDepartment(employeeId, input);
+            var output = await classUnderTest.UpdateEmployeeDepartmentAsync(employeeId, input);
 
             // Assert
             Assert.NotNull(output);

@@ -3,6 +3,7 @@ using AWHumanResources.Data.DTOs;
 using AWHumanResources.Data.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Tortuga.Chain;
 
 namespace AWHumanResources.Services
@@ -31,11 +32,11 @@ namespace AWHumanResources.Services
         /// Gets all.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<EmployeeViewVM> GetAll()
+        public Task<List<EmployeeViewVM>> GetAllAsync()
         {
             return m_DataSource.From(m_EmpWithPayHistTableName)
                 .ToCollection<EmployeeViewVM>()
-                .Execute();
+                .ExecuteAsync();
         }
 
         /// <summary>
@@ -43,11 +44,11 @@ namespace AWHumanResources.Services
         /// </summary>
         /// <param name="departmentId">The department identifier.</param>
         /// <returns></returns>
-        public IEnumerable<EmployeeViewVM> GetEmployeesByDepartmentId(int departmentId)
+        public Task<List<EmployeeViewVM>> GetEmployeesByDepartmentIdAsync(int departmentId)
         {
             return m_DataSource.From(m_EmpWithPayHistTableName, new { DepartmentID = departmentId })
                 .ToCollection<EmployeeViewVM>()
-                .Execute();
+                .ExecuteAsync();
         }
 
         /// <summary>
@@ -55,11 +56,11 @@ namespace AWHumanResources.Services
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
-        public EmployeeViewVM GetEmployeeById(int id)
+        public Task<EmployeeViewVM> GetEmployeeByIdAsync(int id)
         {
             return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = id })
                     .ToObject<EmployeeViewVM>()
-                    .Execute();
+                    .ExecuteAsync();
         }
 
         /// <summary>
@@ -67,11 +68,11 @@ namespace AWHumanResources.Services
         /// </summary>
         /// <param name="vm">The vm.</param>
         /// <returns></returns>
-        public EmployeeViewVM UpdateEmployeePayHist(int employeeId, EmpPayUpdateRequest vm)
+        public async Task<EmployeeViewVM> UpdateEmployeePayHistAsync(int employeeId, EmpPayUpdateRequest vm)
         {
-            EmployeePayHistDto emp = m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
+            EmployeePayHistDto emp = await m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                 .ToObject<EmployeePayHistDto>()
-                .Execute();
+                .ExecuteAsync();
 
             if (emp != null)
             {
@@ -84,13 +85,13 @@ namespace AWHumanResources.Services
                     ModifiedDate = DateTime.Now
                 };
 
-                m_DataSource.Insert(m_EmpPayHistTableName, ephDto).Execute();
-                return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
+                await m_DataSource.Insert(m_EmpPayHistTableName, ephDto).ExecuteAsync();
+                return await m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                 .ToObject<EmployeeViewVM>()
-                .Execute();
+                .ExecuteAsync();
             }
 
-            return null; 
+            return null;
         }
 
         /// <summary>
@@ -98,17 +99,17 @@ namespace AWHumanResources.Services
         /// </summary>
         /// <param name="vm">The vm.</param>
         /// <returns></returns>
-        public EmployeeViewVM UpdateEmployeeDepartment(int employeeId, EmpDeptUpdateRequest vm)
+        public async Task<EmployeeViewVM> UpdateEmployeeDepartmentAsync(int employeeId, EmpDeptUpdateRequest vm)
         {
-            EmployeeViewDto emp = m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
+            EmployeeViewDto emp = await m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                 .ToObject<EmployeeViewDto>()
-                .Execute();
+                .ExecuteAsync();
 
             if (emp != null)
             {
-                DepartmentDto deptDto = m_DataSource.From(m_DepartmentTableName, new { DepartmentID = vm.DepartmentID })
+                DepartmentDto deptDto = await m_DataSource.From(m_DepartmentTableName, new { DepartmentID = vm.DepartmentID })
                     .ToObject<DepartmentDto>()
-                    .Execute();
+                    .ExecuteAsync();
                 
                 if (deptDto != null)
                 {
@@ -121,7 +122,7 @@ namespace AWHumanResources.Services
 
                     // Value to update
                     updateObj["EndDate"] = vm.CurrentDeptEndDate.Date;
-                    m_DataSource.Update(m_EmpDeptHistTableName, updateObj).Execute();
+                    await m_DataSource.Update(m_EmpDeptHistTableName, updateObj).ExecuteAsync();
                 
                     var empDeptHist = new EmployeeDeptHistDto
                     {
@@ -134,9 +135,9 @@ namespace AWHumanResources.Services
                     };
 
                     m_DataSource.Insert(m_EmpDeptHistTableName, empDeptHist).Execute();
-                    return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
+                    return await m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                         .ToObject<EmployeeViewVM>()
-                        .Execute();
+                        .ExecuteAsync();
                 }
                 return null;
             }

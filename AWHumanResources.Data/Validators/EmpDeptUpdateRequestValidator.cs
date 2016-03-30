@@ -3,8 +3,15 @@ using FluentValidation;
 
 namespace AWHumanResources.Data.Validators
 {
+    /// <summary>
+    /// Encapsulates validation for <see cref="EmpDeptUpdateRequest"/>
+    /// </summary>
+    /// <seealso cref="FluentValidation.AbstractValidator{EmpDeptUpdateRequest}" />
     public class EmpDeptUpdateRequestValidator : AbstractValidator<EmpDeptUpdateRequest>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmpDeptUpdateRequestValidator"/> class.
+        /// </summary>
         public EmpDeptUpdateRequestValidator()
         {
             RuleFor(vm => vm.DepartmentID)

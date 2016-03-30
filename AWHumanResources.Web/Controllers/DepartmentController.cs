@@ -1,61 +1,65 @@
 ﻿using AWHumanResources.Data;
+using AWHumanResources.Data.ViewModels;
 using AWHumanResources.Services;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace AWHumanResources.Web.Controllers
 {
+    /// <summary>
+    /// Department Controller
+    /// </summary>
+    /// <seealso cref="ApiController" />
     [RoutePrefix("api/department")]
     public class DepartmentController : ApiController
     {
         private readonly DepartmentService m_DepartmentService;
         private readonly EmployeeService m_EmployeeService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DepartmentController"/> class.
+        /// </summary>
+        /// <param name="departmentService">The department service.</param>
+        /// <param name="employeeService">The employee service.</param>
         public DepartmentController(DepartmentService departmentService, EmployeeService employeeService)
         {
             m_DepartmentService = departmentService;
             m_EmployeeService = employeeService;
         }
 
+        /// <summary>
+        /// Gets a list of departments. 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public HttpResponseMessage Get(HttpRequestMessage request)
+        public Task<List<DepartmentDto>> Get()
         {
-            var deptDtos = m_DepartmentService.GetDepartments();
-            if (deptDtos == null)
-            {
-                return request.CreateResponse(HttpStatusCode.NotFound);
-            }
-            return request.CreateResponse(HttpStatusCode.OK, deptDtos);
+            return m_DepartmentService.GetDepartmentsAsync();
         }
 
+        /// <summary>
+        /// Gets a department by ID.
+        /// </summary>
+        /// <param name="departmentId">The department identifier.</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{departmentId:int}")]
-        public HttpResponseMessage Get(HttpRequestMessage request, int departmentId)
+        public Task<DepartmentDto> Get(int departmentId)
         {
-            var deptDto = m_DepartmentService.GetDepartmentById(departmentId);
-            if (deptDto == null)
-            {
-                return request.CreateResponse(HttpStatusCode.NotFound);
-            }
-            return request.CreateResponse(HttpStatusCode.OK, deptDto);
-
+            return m_DepartmentService.GetDepartmentByIdAsync(departmentId);
         }
 
+        /// <summary>
+        /// Gets a list of employees for the passed department ID.
+        /// </summary>
+        /// <param name="departmentId">The department identifier.</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{departmentId:int}/employees")]
-        public HttpResponseMessage GetByDepartment(HttpRequestMessage request, int departmentId)
+        public Task<List<EmployeeViewVM>> GetByDepartment(int departmentId)
         {
-            var empViewDtos = m_EmployeeService.GetEmployeesByDepartmentId(departmentId);
-            if (empViewDtos == null)
-            {
-                return request.CreateResponse(HttpStatusCode.NotFound);
-            }
-            return request.CreateResponse(HttpStatusCode.OK, empViewDtos);
+            return m_EmployeeService.GetEmployeesByDepartmentIdAsync(departmentId);
         }
     }
 }

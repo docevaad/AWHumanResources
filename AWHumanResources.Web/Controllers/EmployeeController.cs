@@ -1,66 +1,75 @@
 ﻿using AWHumanResources.Data.ViewModels;
 using AWHumanResources.Services;
-using System.Net;
-using System.Net.Http;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace AWHumanResources.Web.Controllers
 {
+    /// <summary>
+    /// Employee Controller
+    /// </summary>
+    /// <seealso cref="ApiController" />
     [RoutePrefix("api/employee")]
     public class EmployeeController : ApiController
     {
         private readonly EmployeeService m_EmployeeService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmployeeController"/> class.
+        /// </summary>
+        /// <param name="employeeService">The employee service.</param>
         public EmployeeController(EmployeeService employeeService)
         {
             m_EmployeeService = employeeService;
         }
 
+        /// <summary>
+        /// Gets a list of employees in the database.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public HttpResponseMessage Get(HttpRequestMessage request)
+        public Task<List<EmployeeViewVM>> Get()
         {
-            var empViewVM = m_EmployeeService.GetAll();
-            if (empViewVM == null)
-            {
-                return request.CreateResponse(HttpStatusCode.NotFound);
-            }
-            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
+            return m_EmployeeService.GetAllAsync();
         }
 
+        /// <summary>
+        /// Gets an employee by the passed identifier.
+        /// </summary>
+        /// <param name="employeeID">The identifier.</param>
+        /// <returns></returns>
         [HttpGet]
-        [Route("{id:int}")]
-        public HttpResponseMessage Get(HttpRequestMessage request, int id)
+        [Route("{employeeID:int}")]
+        public Task<EmployeeViewVM> Get(int employeeID)
         {
-            var empViewVM = m_EmployeeService.GetEmployeeById(id);
-            if (empViewVM == null)
-            {
-                return request.CreateResponse(HttpStatusCode.NotFound);
-            }
-            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
+            return m_EmployeeService.GetEmployeeByIdAsync(employeeID);
         }
 
+        /// <summary>
+        /// Updates an employee's pay.
+        /// </summary>
+        /// <param name="employeeID">The employee identifier.</param>
+        /// <param name="updateRequest">The update request.</param>
+        /// <returns></returns>
         [HttpPost]
-        [Route("{employeeId:int}/UpdatePay")]
-        public HttpResponseMessage UpdatePay(HttpRequestMessage request, int employeeId, EmpPayUpdateRequest vm)
+        [Route("{employeeID:int}/UpdatePay")]
+        public Task<EmployeeViewVM> UpdatePay(int employeeID, EmpPayUpdateRequest updateRequest)
         {
-            var empViewVM = m_EmployeeService.UpdateEmployeePayHist(employeeId, vm);
-            if (empViewVM == null)
-            {
-                return request.CreateResponse(HttpStatusCode.NotFound);
-            }
-            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
+            return m_EmployeeService.UpdateEmployeePayHistAsync(employeeID, updateRequest);
         }
 
+        /// <summary>
+        /// Updates an employee's dept.
+        /// </summary>
+        /// <param name="employeeID">The employee identifier.</param>
+        /// <param name="updateRequest">The update request.</param>
+        /// <returns></returns>
         [HttpPost]
-        [Route("{employeeId:int}/UpdateDept")]
-        public HttpResponseMessage UpdateDept(HttpRequestMessage request,  int employeeId, EmpDeptUpdateRequest vm)
+        [Route("{employeeID:int}/UpdateDept")]
+        public Task<EmployeeViewVM> UpdateDept(int employeeID, EmpDeptUpdateRequest updateRequest)
         {
-            var empViewVM = m_EmployeeService.UpdateEmployeeDepartment(employeeId, vm);
-            if (empViewVM == null)
-            {
-                return request.CreateResponse(HttpStatusCode.NotFound);
-            }
-            return request.CreateResponse(HttpStatusCode.OK, empViewVM);
+            return m_EmployeeService.UpdateEmployeeDepartmentAsync(employeeID, updateRequest);
         }
     }
 }
