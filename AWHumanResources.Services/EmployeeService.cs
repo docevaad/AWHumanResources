@@ -134,7 +134,7 @@ namespace AWHumanResources.Services
                         ModifiedDate = DateTime.Now
                     };
 
-                    m_DataSource.Insert(m_EmpDeptHistTableName, empDeptHist).Execute();
+                    await m_DataSource.Insert(m_EmpDeptHistTableName, empDeptHist).Execute();
                     return await m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                         .ToObject<EmployeeViewVM>()
                         .ExecuteAsync();
