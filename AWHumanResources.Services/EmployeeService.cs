@@ -110,35 +110,48 @@ namespace AWHumanResources.Services
                 throw new ArgumentException($"Employee {employeeId} does not exist.");
 
             DepartmentDto deptDto = await m_DataSource.From(DepartmentTableName, new { DepartmentID = vm.DepartmentID })
-                                .ToObject<DepartmentDto>()
-                                .ExecuteAsync();
+                    .ToObject<DepartmentDto>()
+                    .ExecuteAsync();
 
             if (deptDto == null)
                 throw new ArgumentException($"Department {vm.DepartmentID} does not exist.");
 
-
-            var updateObj = new Dictionary<string, object>();
-            // Table Keys
-            updateObj["BusinessEntityID"] = emp.BusinessEntityID;
-            updateObj["DepartmentID"] = emp.DepartmentID;
-            updateObj["ShiftID"] = emp.ShiftID;
-            updateObj["StartDate"] = emp.DeptStartDate.Date;
-
-            // Value to update
-            updateObj["EndDate"] = vm.CurrentDeptEndDate.Date;
-            await m_DataSource.Update(EmpDeptHistTableName, updateObj).ExecuteAsync();
-
-            var empDeptHist = new EmployeeDeptHistDto
+            using (var transactionDS = m_DataSource.BeginTransaction("UpdateDeptTransaction"))
             {
-                DepartmentID = deptDto.DepartmentID,
-                BusinessEntityID = employeeId,
-                ShiftID = emp.ShiftID,
-                StartDate = vm.NewDeptStartDate.Date,
-                EndDate = null,
-                ModifiedDate = DateTime.Now
-            };
+                try
+                {
+                    var updateObj = new Dictionary<string, object>();
+                    // Table Keys
+                    updateObj["BusinessEntityID"] = emp.BusinessEntityID;
+                    updateObj["DepartmentID"] = emp.DepartmentID;
+                    updateObj["ShiftID"] = emp.ShiftID;
+                    updateObj["StartDate"] = emp.DeptStartDate.Date;
 
-            await m_DataSource.Insert(EmpDeptHistTableName, empDeptHist).ExecuteAsync();
+                    // Value to update
+                    updateObj["EndDate"] = vm.CurrentDeptEndDate.Date;
+
+                    await transactionDS.Update(EmpDeptHistTableName, updateObj).ExecuteAsync();
+
+                    var empDeptHist = new EmployeeDeptHistDto
+                    {
+                        DepartmentID = deptDto.DepartmentID,
+                        BusinessEntityID = employeeId,
+                        ShiftID = emp.ShiftID,
+                        StartDate = vm.NewDeptStartDate.Date,
+                        EndDate = null,
+                        ModifiedDate = DateTime.Now
+                    };
+
+                    await transactionDS.Insert(EmpDeptHistTableName, empDeptHist).ExecuteAsync();
+                    transactionDS.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transactionDS.Rollback();
+                    throw ex;
+                }
+            }
+
             return await m_DataSource.From(EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                 .ToObject<EmployeeViewVM>()
                 .ExecuteAsync();
