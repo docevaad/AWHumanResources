@@ -1,8 +1,8 @@
+using AWHumanResources.Web.Areas.HelpPage.ModelDescriptions;
+using AWHumanResources.Web.Areas.HelpPage.Models;
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using AWHumanResources.Web.Areas.HelpPage.ModelDescriptions;
-using AWHumanResources.Web.Areas.HelpPage.Models;
 
 namespace AWHumanResources.Web.Areas.HelpPage.Controllers
 {

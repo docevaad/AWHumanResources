@@ -1,8 +1,8 @@
+using AWHumanResources.Web.Areas.HelpPage.ModelDescriptions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
 using System.Web.Http.Description;
-using AWHumanResources.Web.Areas.HelpPage.ModelDescriptions;
 
 namespace AWHumanResources.Web.Areas.HelpPage.Models
 {

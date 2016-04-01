@@ -12,7 +12,7 @@ namespace AWHumanResources.Services
     public class DepartmentService
     {
         private readonly SqlServerDataSource m_DataSource;
-        private const string m_DeptTableName = "HumanResources.Department";
+        private const string DeptTableName = "HumanResources.Department";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DepartmentService"/> class.
@@ -29,7 +29,7 @@ namespace AWHumanResources.Services
         /// <returns></returns>
         public Task<List<DepartmentDto>> GetDepartmentsAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            return m_DataSource.From(m_DeptTableName).ToCollection<DepartmentDto>().ExecuteAsync(cancellationToken);
+            return m_DataSource.From(DeptTableName).ToCollection<DepartmentDto>().ExecuteAsync(cancellationToken);
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace AWHumanResources.Services
         /// <returns></returns>
         public Task<DepartmentDto> GetDepartmentByIdAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return m_DataSource.From(m_DeptTableName, new { DepartmentID = departmentId }).ToObject<DepartmentDto>().ExecuteAsync(cancellationToken);
+            return m_DataSource.From(DeptTableName, new { DepartmentID = departmentId }).ToObject<DepartmentDto>().ExecuteAsync(cancellationToken);
         }
     }
 }

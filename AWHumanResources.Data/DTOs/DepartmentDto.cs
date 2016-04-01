@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AWHumanResources.Data
+﻿namespace AWHumanResources.Data
 {
     public class DepartmentDto
     {
