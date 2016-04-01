@@ -7,7 +7,6 @@ namespace AWHumanResources.Web
     {
         public static void Register(HttpConfiguration config)
         {
-			RAML.WebApiExplorer.DocumentationProviderConfig.IncludeXmlComments();
             // Web API configuration and services
             config.Filters.Add(new ValidateModelStateFilter());
             config.Filters.Add(new ResourceNotFoundExceptionFilter());

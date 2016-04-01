@@ -2,6 +2,7 @@
 using AWHumanResources.Data.ViewModels;
 using AWHumanResources.Services;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -33,9 +34,9 @@ namespace AWHumanResources.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public Task<List<DepartmentDto>> Get()
+        public Task<List<DepartmentDto>> Get(CancellationToken cancellationToken = default(CancellationToken))
         {
-            return m_DepartmentService.GetDepartmentsAsync();
+            return m_DepartmentService.GetDepartmentsAsync(cancellationToken);
         }
 
         /// <summary>
@@ -45,9 +46,9 @@ namespace AWHumanResources.Web.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{departmentId:int}")]
-        public Task<DepartmentDto> Get(int departmentId)
+        public Task<DepartmentDto> Get(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return m_DepartmentService.GetDepartmentByIdAsync(departmentId);
+            return m_DepartmentService.GetDepartmentByIdAsync(departmentId, cancellationToken);
         }
 
         /// <summary>
@@ -57,9 +58,9 @@ namespace AWHumanResources.Web.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{departmentId:int}/employees")]
-        public Task<List<EmployeeViewVM>> GetByDepartment(int departmentId)
+        public Task<List<EmployeeViewVM>> GetByDepartment(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return m_EmployeeService.GetEmployeesByDepartmentIdAsync(departmentId);
+            return m_EmployeeService.GetEmployeesByDepartmentIdAsync(departmentId, cancellationToken);
         }
     }
 }

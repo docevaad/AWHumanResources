@@ -29,8 +29,8 @@ namespace AWHumanResources.Web.App_Start
                 .WithParameter("connectionString", System.Configuration.ConfigurationManager.ConnectionStrings["AdventureWorksSqlServer"].ConnectionString)
                 .SingleInstance();
 
-            containerBuilder.RegisterType<DepartmentService>().InstancePerRequest();
-            containerBuilder.RegisterType<EmployeeService>().InstancePerRequest();
+            containerBuilder.RegisterType<DepartmentService>().SingleInstance();
+            containerBuilder.RegisterType<EmployeeService>().SingleInstance();
 
             Container = containerBuilder.Build();
 

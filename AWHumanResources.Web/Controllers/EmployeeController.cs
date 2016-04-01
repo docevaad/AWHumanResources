@@ -1,6 +1,7 @@
 ﻿using AWHumanResources.Data.ViewModels;
 using AWHumanResources.Services;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -29,7 +30,7 @@ namespace AWHumanResources.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public Task<List<EmployeeViewVM>> Get()
+        public Task<List<EmployeeViewVM>> Get(CancellationToken cancellationToken = default(CancellationToken))
         {
             return m_EmployeeService.GetAllAsync();
         }
@@ -41,9 +42,9 @@ namespace AWHumanResources.Web.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("{employeeID:int}")]
-        public Task<EmployeeViewVM> Get(int employeeID)
+        public Task<EmployeeViewVM> Get(int employeeID, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return m_EmployeeService.GetEmployeeByIdAsync(employeeID);
+            return m_EmployeeService.GetEmployeeByIdAsync(employeeID, cancellationToken);
         }
 
         /// <summary>

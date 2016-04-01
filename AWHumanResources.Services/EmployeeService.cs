@@ -3,6 +3,7 @@ using AWHumanResources.Data.DTOs;
 using AWHumanResources.Data.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Tortuga.Chain;
 
@@ -14,10 +15,10 @@ namespace AWHumanResources.Services
     public class EmployeeService
     {
         private readonly SqlServerDataSource m_DataSource;
-        private readonly string m_EmpWithPayHistTableName = "HumanResources.vEmployeeWithPayHist";
-        private readonly string m_EmpPayHistTableName = "HumanResources.EmployeePayHistory";
-        private readonly string m_DepartmentTableName = "HumanResources.Department";
-        private readonly string m_EmpDeptHistTableName = "HumanResources.EmployeeDepartmentHistory";
+        private const string EmpWithPayHistTableName = "HumanResources.vEmployeeWithPayHist";
+        private const string EmpPayHistTableName = "HumanResources.EmployeePayHistory";
+        private const string DepartmentTableName = "HumanResources.Department";
+        private const string EmpDeptHistTableName = "HumanResources.EmployeeDepartmentHistory";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EmployeeService"/> class.
@@ -32,11 +33,11 @@ namespace AWHumanResources.Services
         /// Gets all.
         /// </summary>
         /// <returns></returns>
-        public Task<List<EmployeeViewVM>> GetAllAsync()
+        public Task<List<EmployeeViewVM>> GetAllAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            return m_DataSource.From(m_EmpWithPayHistTableName)
+            return m_DataSource.From(EmpWithPayHistTableName)
                 .ToCollection<EmployeeViewVM>()
-                .ExecuteAsync();
+                .ExecuteAsync(cancellationToken);
         }
 
         /// <summary>
@@ -44,11 +45,11 @@ namespace AWHumanResources.Services
         /// </summary>
         /// <param name="departmentId">The department identifier.</param>
         /// <returns></returns>
-        public Task<List<EmployeeViewVM>> GetEmployeesByDepartmentIdAsync(int departmentId)
+        public Task<List<EmployeeViewVM>> GetEmployeesByDepartmentIdAsync(int departmentId, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return m_DataSource.From(m_EmpWithPayHistTableName, new { DepartmentID = departmentId })
+            return m_DataSource.From(EmpWithPayHistTableName, new { DepartmentID = departmentId })
                 .ToCollection<EmployeeViewVM>()
-                .ExecuteAsync();
+                .ExecuteAsync(cancellationToken);
         }
 
         /// <summary>
@@ -56,11 +57,11 @@ namespace AWHumanResources.Services
         /// </summary>
         /// <param name="id">The identifier.</param>
         /// <returns></returns>
-        public Task<EmployeeViewVM> GetEmployeeByIdAsync(int id)
+        public Task<EmployeeViewVM> GetEmployeeByIdAsync(int id, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = id })
+            return m_DataSource.From(EmpWithPayHistTableName, new { BusinessEntityID = id })
                     .ToObject<EmployeeViewVM>()
-                    .ExecuteAsync();
+                    .ExecuteAsync(cancellationToken);
         }
 
         /// <summary>
@@ -70,7 +71,7 @@ namespace AWHumanResources.Services
         /// <returns></returns>
         public async Task<EmployeeViewVM> UpdateEmployeePayHistAsync(int employeeId, EmpPayUpdateRequest vm)
         {
-            EmployeePayHistDto emp = await m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
+            EmployeePayHistDto emp = await m_DataSource.From(EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                 .ToObject<EmployeePayHistDto>()
                 .ExecuteAsync();
 
@@ -85,8 +86,8 @@ namespace AWHumanResources.Services
                     ModifiedDate = DateTime.Now
                 };
 
-                await m_DataSource.Insert(m_EmpPayHistTableName, ephDto).ExecuteAsync();
-                return await m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
+                await m_DataSource.Insert(EmpPayHistTableName, ephDto).ExecuteAsync();
+                return await m_DataSource.From(EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                 .ToObject<EmployeeViewVM>()
                 .ExecuteAsync();
             }
@@ -101,47 +102,46 @@ namespace AWHumanResources.Services
         /// <returns></returns>
         public async Task<EmployeeViewVM> UpdateEmployeeDepartmentAsync(int employeeId, EmpDeptUpdateRequest vm)
         {
-            EmployeeViewDto emp = await m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
+            EmployeeViewDto emp = await m_DataSource.From(EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
                 .ToObject<EmployeeViewDto>()
                 .ExecuteAsync();
 
-            if (emp != null)
+            if (emp == null)
+                throw new ArgumentException($"Employee {employeeId} does not exist.");
+
+            DepartmentDto deptDto = await m_DataSource.From(DepartmentTableName, new { DepartmentID = vm.DepartmentID })
+                                .ToObject<DepartmentDto>()
+                                .ExecuteAsync();
+
+            if (deptDto == null)
+                throw new ArgumentException($"Department {vm.DepartmentID} does not exist.");
+
+
+            var updateObj = new Dictionary<string, object>();
+            // Table Keys
+            updateObj["BusinessEntityID"] = emp.BusinessEntityID;
+            updateObj["DepartmentID"] = emp.DepartmentID;
+            updateObj["ShiftID"] = emp.ShiftID;
+            updateObj["StartDate"] = emp.DeptStartDate.Date;
+
+            // Value to update
+            updateObj["EndDate"] = vm.CurrentDeptEndDate.Date;
+            await m_DataSource.Update(EmpDeptHistTableName, updateObj).ExecuteAsync();
+
+            var empDeptHist = new EmployeeDeptHistDto
             {
-                DepartmentDto deptDto = await m_DataSource.From(m_DepartmentTableName, new { DepartmentID = vm.DepartmentID })
-                    .ToObject<DepartmentDto>()
-                    .ExecuteAsync();
-                
-                if (deptDto != null)
-                {
-                    var updateObj = new Dictionary<string, object>();
-                    // Table Keys
-                    updateObj["BusinessEntityID"] = emp.BusinessEntityID;
-                    updateObj["DepartmentID"] = emp.DepartmentID;
-                    updateObj["ShiftID"] = emp.ShiftID;
-                    updateObj["StartDate"] = emp.DeptStartDate.Date;
+                DepartmentID = deptDto.DepartmentID,
+                BusinessEntityID = employeeId,
+                ShiftID = emp.ShiftID,
+                StartDate = vm.NewDeptStartDate.Date,
+                EndDate = null,
+                ModifiedDate = DateTime.Now
+            };
 
-                    // Value to update
-                    updateObj["EndDate"] = vm.CurrentDeptEndDate.Date;
-                    await m_DataSource.Update(m_EmpDeptHistTableName, updateObj).ExecuteAsync();
-                
-                    var empDeptHist = new EmployeeDeptHistDto
-                    {
-                        DepartmentID = deptDto.DepartmentID,
-                        BusinessEntityID = employeeId,
-                        ShiftID = emp.ShiftID,
-                        StartDate = vm.NewDeptStartDate.Date,
-                        EndDate = null,
-                        ModifiedDate = DateTime.Now
-                    };
-
-                    await m_DataSource.Insert(m_EmpDeptHistTableName, empDeptHist).ExecuteAsync();
-                    return await m_DataSource.From(m_EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
-                        .ToObject<EmployeeViewVM>()
-                        .ExecuteAsync();
-                }
-                return null;
-            }
-            return null;
+            await m_DataSource.Insert(EmpDeptHistTableName, empDeptHist).ExecuteAsync();
+            return await m_DataSource.From(EmpWithPayHistTableName, new { BusinessEntityID = employeeId })
+                .ToObject<EmployeeViewVM>()
+                .ExecuteAsync();
         }
     }
 }
