@@ -7,7 +7,6 @@ namespace AWHumanResources.Web.App_Start
     {
         public static void Run()
         {
-            Debug.WriteLine("Made it here");
             AutofacWebapiConfig.Initialize(GlobalConfiguration.Configuration);
         }
     }
